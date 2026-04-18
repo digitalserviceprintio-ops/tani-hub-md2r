@@ -58,7 +58,15 @@ const InputPanen = () => {
       return;
     }
     setSaving(true);
-    const { error } = await supabase.from("panen").insert([parsed.data]);
+    const payload = {
+      tanggal: parsed.data.tanggal,
+      blok_id: parsed.data.blok_id,
+      petani_id: parsed.data.petani_id,
+      tonase_kg: parsed.data.tonase_kg,
+      jumlah_janjang: parsed.data.jumlah_janjang,
+      catatan: parsed.data.catatan ?? null,
+    };
+    const { error } = await supabase.from("panen").insert(payload);
     setSaving(false);
     if (error) {
       toast({ title: "Gagal menyimpan", description: error.message, variant: "destructive" });
