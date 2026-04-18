@@ -9,7 +9,9 @@ import InputPanen from "./pages/InputPanen";
 import PetaniPage from "./pages/PetaniPage";
 import BlokPage from "./pages/BlokPage";
 import Laporan from "./pages/Laporan";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound.tsx";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +22,14 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route element={<AppLayout />}>
+          <Route path="/auth" element={<Auth />} />
+          <Route
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route path="/" element={<Dashboard />} />
             <Route path="/input" element={<InputPanen />} />
             <Route path="/petani" element={<PetaniPage />} />

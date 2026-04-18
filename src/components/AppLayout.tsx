@@ -1,6 +1,9 @@
-import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, Sprout, Users, MapPin, BarChart3, Plus } from "lucide-react";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { LayoutDashboard, Sprout, Users, MapPin, BarChart3, Plus, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard", end: true },
@@ -20,7 +23,14 @@ const titles: Record<string, string> = {
 
 const AppLayout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const title = titles[location.pathname] ?? "TaniHub";
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Berhasil keluar");
+    navigate("/auth", { replace: true });
+  };
 
   return (
     <div className="min-h-dvh bg-background flex flex-col">
@@ -35,7 +45,10 @@ const AppLayout = () => {
               <div className="text-[11px] text-muted-foreground mt-0.5">{title}</div>
             </div>
           </div>
-          <div className="text-xs text-muted-foreground font-medium">Plasma Sawit</div>
+          <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground hover:text-primary gap-1.5">
+            <LogOut className="size-4" />
+            <span className="text-xs">Keluar</span>
+          </Button>
         </div>
       </header>
 
