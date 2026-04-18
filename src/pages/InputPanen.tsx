@@ -58,7 +58,7 @@ const InputPanen = () => {
       return;
     }
     setSaving(true);
-    const { error } = await supabase.from("panen").insert(parsed.data);
+    const { error } = await supabase.from("panen").insert([parsed.data]);
     setSaving(false);
     if (error) {
       toast({ title: "Gagal menyimpan", description: error.message, variant: "destructive" });
