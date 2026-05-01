@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { Save } from "lucide-react";
+import { Save, CheckCircle2 } from "lucide-react";
 import { z } from "zod";
 
 const schema = z.object({
@@ -78,38 +77,32 @@ const InputPanen = () => {
 
   if (bloks.length === 0 || petanis.length === 0) {
     return (
-      <Card className="p-6 text-center border-dashed">
+      <div className="native-card p-6 text-center">
         <p className="text-sm text-muted-foreground mb-4">
           {bloks.length === 0 && "Belum ada data blok. "}
           {petanis.length === 0 && "Belum ada data petani. "}
           Tambahkan dulu sebelum mencatat panen.
         </p>
         <div className="flex gap-2 justify-center">
-          {bloks.length === 0 && <Button onClick={() => navigate("/blok")}>+ Tambah Blok</Button>}
-          {petanis.length === 0 && <Button onClick={() => navigate("/petani")} variant="outline">+ Tambah Petani</Button>}
+          {bloks.length === 0 && <Button onClick={() => navigate("/blok")} className="rounded-xl h-11">+ Tambah Blok</Button>}
+          {petanis.length === 0 && <Button onClick={() => navigate("/petani")} variant="outline" className="rounded-xl h-11">+ Tambah Petani</Button>}
         </div>
-      </Card>
+      </div>
     );
   }
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      <Card className="p-5 space-y-4 shadow-card border-border">
+      <div className="native-card p-4 space-y-4">
         <div>
-          <Label htmlFor="tanggal">Tanggal Panen</Label>
-          <Input
-            id="tanggal"
-            type="date"
-            value={form.tanggal}
-            onChange={(e) => setForm({ ...form, tanggal: e.target.value })}
-            className="mt-1.5"
-          />
+          <Label htmlFor="tanggal" className="text-sm">Tanggal Panen</Label>
+          <Input id="tanggal" type="date" value={form.tanggal} onChange={(e) => setForm({ ...form, tanggal: e.target.value })} className="mt-1.5 h-11 rounded-xl bg-muted/50 border-0" />
         </div>
 
         <div>
-          <Label>Blok</Label>
+          <Label className="text-sm">Blok</Label>
           <Select value={form.blok_id} onValueChange={(v) => setForm({ ...form, blok_id: v })}>
-            <SelectTrigger className="mt-1.5"><SelectValue placeholder="Pilih blok" /></SelectTrigger>
+            <SelectTrigger className="mt-1.5 h-11 rounded-xl bg-muted/50 border-0"><SelectValue placeholder="Pilih blok" /></SelectTrigger>
             <SelectContent>
               {bloks.map((b) => (
                 <SelectItem key={b.id} value={b.id}>{b.kode} — {b.nama}</SelectItem>
@@ -119,9 +112,9 @@ const InputPanen = () => {
         </div>
 
         <div>
-          <Label>Petani Plasma</Label>
+          <Label className="text-sm">Petani Plasma</Label>
           <Select value={form.petani_id} onValueChange={(v) => setForm({ ...form, petani_id: v })}>
-            <SelectTrigger className="mt-1.5"><SelectValue placeholder="Pilih petani" /></SelectTrigger>
+            <SelectTrigger className="mt-1.5 h-11 rounded-xl bg-muted/50 border-0"><SelectValue placeholder="Pilih petani" /></SelectTrigger>
             <SelectContent>
               {petanis.map((p) => (
                 <SelectItem key={p.id} value={p.id}>{p.nama}</SelectItem>
@@ -132,52 +125,23 @@ const InputPanen = () => {
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <Label htmlFor="tonase">Tonase (kg)</Label>
-            <Input
-              id="tonase"
-              type="number"
-              inputMode="decimal"
-              step="0.01"
-              placeholder="0.00"
-              value={form.tonase_kg}
-              onChange={(e) => setForm({ ...form, tonase_kg: e.target.value })}
-              className="mt-1.5"
-            />
+            <Label htmlFor="tonase" className="text-sm">Tonase (kg)</Label>
+            <Input id="tonase" type="number" inputMode="decimal" step="0.01" placeholder="0.00" value={form.tonase_kg} onChange={(e) => setForm({ ...form, tonase_kg: e.target.value })} className="mt-1.5 h-11 rounded-xl bg-muted/50 border-0" />
           </div>
           <div>
-            <Label htmlFor="janjang">Jumlah Janjang</Label>
-            <Input
-              id="janjang"
-              type="number"
-              inputMode="numeric"
-              placeholder="0"
-              value={form.jumlah_janjang}
-              onChange={(e) => setForm({ ...form, jumlah_janjang: e.target.value })}
-              className="mt-1.5"
-            />
+            <Label htmlFor="janjang" className="text-sm">Jumlah Janjang</Label>
+            <Input id="janjang" type="number" inputMode="numeric" placeholder="0" value={form.jumlah_janjang} onChange={(e) => setForm({ ...form, jumlah_janjang: e.target.value })} className="mt-1.5 h-11 rounded-xl bg-muted/50 border-0" />
           </div>
         </div>
 
         <div>
-          <Label htmlFor="catatan">Catatan (opsional)</Label>
-          <Textarea
-            id="catatan"
-            rows={2}
-            maxLength={500}
-            placeholder="Cuaca, kualitas buah, dll."
-            value={form.catatan}
-            onChange={(e) => setForm({ ...form, catatan: e.target.value })}
-            className="mt-1.5"
-          />
+          <Label htmlFor="catatan" className="text-sm">Catatan (opsional)</Label>
+          <Textarea id="catatan" rows={2} maxLength={500} placeholder="Cuaca, kualitas buah, dll." value={form.catatan} onChange={(e) => setForm({ ...form, catatan: e.target.value })} className="mt-1.5 rounded-xl bg-muted/50 border-0" />
         </div>
-      </Card>
+      </div>
 
-      <Button
-        type="submit"
-        disabled={saving}
-        className="w-full h-12 gradient-leaf text-success-foreground font-bold shadow-cta hover:opacity-95"
-      >
-        <Save className="size-4 mr-2" />
+      <Button type="submit" disabled={saving} className="w-full h-12 rounded-xl font-semibold text-base shadow-cta press-effect">
+        <CheckCircle2 className="size-5 mr-2" />
         {saving ? "Menyimpan..." : "Simpan Catatan Panen"}
       </Button>
     </form>

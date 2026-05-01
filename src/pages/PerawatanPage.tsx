@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
@@ -23,7 +22,6 @@ const PerawatanPage = () => {
   const [tanggal, setTanggal] = useState(new Date().toISOString().slice(0, 10));
   const [keterangan, setKeterangan] = useState("");
 
-  // Edit state
   const [editItem, setEditItem] = useState<any>(null);
   const [editJenis, setEditJenis] = useState("");
   const [editBlokId, setEditBlokId] = useState("");
@@ -42,10 +40,7 @@ const PerawatanPage = () => {
   const { data: perawatanList = [], isLoading } = useQuery({
     queryKey: ["perawatan"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("perawatan")
-        .select("*, blok(kode, nama)")
-        .order("tanggal", { ascending: false });
+      const { data, error } = await supabase.from("perawatan").select("*, blok(kode, nama)").order("tanggal", { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -53,21 +48,14 @@ const PerawatanPage = () => {
 
   const addMutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("perawatan").insert({
-        blok_id: blokId,
-        jenis,
-        tanggal,
-        keterangan: keterangan || null,
-      });
+      const { error } = await supabase.from("perawatan").insert({ blok_id: blokId, jenis, tanggal, keterangan: keterangan || null });
       if (error) throw error;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["perawatan"] });
       toast.success("Perawatan berhasil dicatat");
       setShowForm(false);
-      setJenis("");
-      setBlokId("");
-      setKeterangan("");
+      setJenis(""); setBlokId(""); setKeterangan("");
       setTanggal(new Date().toISOString().slice(0, 10));
     },
     onError: (e: any) => toast.error(e.message),
@@ -75,12 +63,7 @@ const PerawatanPage = () => {
 
   const updateMutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("perawatan").update({
-        blok_id: editBlokId,
-        jenis: editJenis,
-        tanggal: editTanggal,
-        keterangan: editKeterangan || null,
-      }).eq("id", editItem.id);
+      const { error } = await supabase.from("perawatan").update({ blok_id: editBlokId, jenis: editJenis, tanggal: editTanggal, keterangan: editKeterangan || null }).eq("id", editItem.id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -96,161 +79,132 @@ const PerawatanPage = () => {
       const { error } = await supabase.from("perawatan").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["perawatan"] });
-      toast.success("Data dihapus");
-    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["perawatan"] }); toast.success("Data dihapus"); },
     onError: (e: any) => toast.error(e.message),
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!jenis || !blokId) {
-      toast.error("Pilih blok dan jenis perawatan");
-      return;
-    }
+    if (!jenis || !blokId) { toast.error("Pilih blok dan jenis perawatan"); return; }
     addMutation.mutate();
   };
 
   const handleEdit = (item: any) => {
-    setEditItem(item);
-    setEditJenis(item.jenis);
-    setEditBlokId(item.blok_id);
-    setEditTanggal(item.tanggal);
-    setEditKeterangan(item.keterangan || "");
+    setEditItem(item); setEditJenis(item.jenis); setEditBlokId(item.blok_id);
+    setEditTanggal(item.tanggal); setEditKeterangan(item.keterangan || "");
   };
 
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editJenis || !editBlokId) {
-      toast.error("Pilih blok dan jenis perawatan");
-      return;
-    }
+    if (!editJenis || !editBlokId) { toast.error("Pilih blok dan jenis perawatan"); return; }
     updateMutation.mutate();
   };
 
   const formFields = (
-    prefix: "add" | "edit",
     values: { jenis: string; blokId: string; tanggal: string; keterangan: string },
     setters: { setJenis: (v: string) => void; setBlokId: (v: string) => void; setTanggal: (v: string) => void; setKeterangan: (v: string) => void }
   ) => (
     <>
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <Label>Blok</Label>
+          <Label className="text-sm">Blok</Label>
           <Select value={values.blokId} onValueChange={setters.setBlokId}>
-            <SelectTrigger><SelectValue placeholder="Pilih blok" /></SelectTrigger>
+            <SelectTrigger className="h-11 rounded-xl bg-muted/50 border-0"><SelectValue placeholder="Pilih blok" /></SelectTrigger>
             <SelectContent>
-              {blokList.map((b: any) => (
-                <SelectItem key={b.id} value={b.id}>{b.kode} - {b.nama}</SelectItem>
-              ))}
+              {blokList.map((b: any) => (<SelectItem key={b.id} value={b.id}>{b.kode} - {b.nama}</SelectItem>))}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1.5">
-          <Label>Jenis</Label>
+          <Label className="text-sm">Jenis</Label>
           <Select value={values.jenis} onValueChange={setters.setJenis}>
-            <SelectTrigger><SelectValue placeholder="Pilih jenis" /></SelectTrigger>
+            <SelectTrigger className="h-11 rounded-xl bg-muted/50 border-0"><SelectValue placeholder="Pilih jenis" /></SelectTrigger>
             <SelectContent>
-              {JENIS_OPTIONS.map((j) => (
-                <SelectItem key={j} value={j}>{j}</SelectItem>
-              ))}
+              {JENIS_OPTIONS.map((j) => (<SelectItem key={j} value={j}>{j}</SelectItem>))}
             </SelectContent>
           </Select>
         </div>
       </div>
       <div className="space-y-1.5">
-        <Label>Tanggal</Label>
-        <Input type="date" value={values.tanggal} onChange={(e) => setters.setTanggal(e.target.value)} />
+        <Label className="text-sm">Tanggal</Label>
+        <Input type="date" value={values.tanggal} onChange={(e) => setters.setTanggal(e.target.value)} className="h-11 rounded-xl bg-muted/50 border-0" />
       </div>
       <div className="space-y-1.5">
-        <Label>Keterangan</Label>
-        <Textarea value={values.keterangan} onChange={(e) => setters.setKeterangan(e.target.value)} placeholder="Catatan tambahan (opsional)" rows={2} />
+        <Label className="text-sm">Keterangan</Label>
+        <Textarea value={values.keterangan} onChange={(e) => setters.setKeterangan(e.target.value)} placeholder="Catatan tambahan (opsional)" rows={2} className="rounded-xl bg-muted/50 border-0" />
       </div>
     </>
   );
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-serif font-bold text-primary">Perawatan</h1>
+        <p className="text-sm text-muted-foreground">{perawatanList.length} kegiatan</p>
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" onClick={() => navigate("/rekap-perawatan")} className="gap-1.5">
-            <BarChart3 className="size-4" />
-            Rekap
+          <Button size="sm" variant="outline" onClick={() => navigate("/rekap-perawatan")} className="rounded-full h-9 px-3 gap-1.5">
+            <BarChart3 className="size-4" /> Rekap
           </Button>
-          <Button size="sm" onClick={() => setShowForm(!showForm)} className="gap-1.5">
-            <Plus className="size-4" />
-            Tambah
+          <Button size="sm" onClick={() => setShowForm(!showForm)} className="rounded-full h-9 px-4 font-semibold gap-1.5">
+            <Plus className="size-4" /> Tambah
           </Button>
         </div>
       </div>
 
       {showForm && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">Catat Perawatan</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {formFields("add", { jenis, blokId, tanggal, keterangan }, { setJenis, setBlokId, setTanggal, setKeterangan })}
-              <Button type="submit" className="w-full" disabled={addMutation.isPending}>
-                {addMutation.isPending ? "Menyimpan..." : "Simpan"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        <div className="native-card p-4">
+          <p className="font-semibold text-sm mb-3">Catat Perawatan</p>
+          <form onSubmit={handleSubmit} className="space-y-3">
+            {formFields({ jenis, blokId, tanggal, keterangan }, { setJenis, setBlokId, setTanggal, setKeterangan })}
+            <Button type="submit" className="w-full h-11 rounded-xl font-semibold" disabled={addMutation.isPending}>
+              {addMutation.isPending ? "Menyimpan..." : "Simpan"}
+            </Button>
+          </form>
+        </div>
       )}
 
       {isLoading ? (
         <p className="text-sm text-muted-foreground text-center py-8">Memuat data...</p>
       ) : perawatanList.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-8">Belum ada data perawatan</p>
+        <div className="native-card p-8 text-center">
+          <Wrench className="size-8 mx-auto text-muted-foreground mb-2" />
+          <p className="text-sm text-muted-foreground">Belum ada data perawatan</p>
+        </div>
       ) : (
-        <div className="space-y-3">
-          {perawatanList.map((item: any) => (
-            <Card key={item.id}>
-              <CardContent className="flex items-center justify-between py-3 px-4">
-                <div className="flex items-start gap-3">
-                  <div className="size-9 rounded-lg bg-accent flex items-center justify-center mt-0.5">
-                    <Wrench className="size-4 text-primary" />
-                  </div>
-                  <div>
-                    <div className="font-medium text-sm">{item.jenis}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {(item.blok as any)?.kode} — {new Date(item.tanggal).toLocaleDateString("id-ID")}
-                    </div>
-                    {item.keterangan && (
-                      <div className="text-xs text-muted-foreground mt-0.5">{item.keterangan}</div>
-                    )}
-                  </div>
+        <div className="native-card overflow-hidden">
+          {perawatanList.map((item: any, idx: number) => (
+            <div key={item.id} className={`native-list-item press-effect ${idx < perawatanList.length - 1 ? '' : 'border-0'}`}>
+              <div className="size-10 rounded-xl bg-secondary flex items-center justify-center shrink-0">
+                <Wrench className="size-4 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-sm">{item.jenis}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">
+                  {(item.blok as any)?.kode} — {new Date(item.tanggal).toLocaleDateString("id-ID")}
                 </div>
-                <div className="flex gap-1">
-                  <Button variant="ghost" size="icon" onClick={() => handleEdit(item)}>
-                    <Pencil className="size-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="text-destructive" onClick={() => deleteMutation.mutate(item.id)}>
-                    <Trash2 className="size-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                {item.keterangan && <div className="text-xs text-muted-foreground mt-0.5">{item.keterangan}</div>}
+              </div>
+              <div className="flex gap-0.5">
+                <button onClick={() => handleEdit(item)} className="p-2 text-muted-foreground hover:text-foreground transition-colors">
+                  <Pencil className="size-4" />
+                </button>
+                <button onClick={() => deleteMutation.mutate(item.id)} className="p-2 text-destructive/60 hover:text-destructive transition-colors">
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+            </div>
           ))}
         </div>
       )}
 
-      {/* Edit Dialog */}
       <Dialog open={!!editItem} onOpenChange={(open) => { if (!open) setEditItem(null); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Perawatan</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleEditSubmit} className="space-y-4">
-            {formFields("edit",
+        <DialogContent className="rounded-2xl">
+          <DialogHeader><DialogTitle>Edit Perawatan</DialogTitle></DialogHeader>
+          <form onSubmit={handleEditSubmit} className="space-y-3">
+            {formFields(
               { jenis: editJenis, blokId: editBlokId, tanggal: editTanggal, keterangan: editKeterangan },
               { setJenis: setEditJenis, setBlokId: setEditBlokId, setTanggal: setEditTanggal, setKeterangan: setEditKeterangan }
             )}
-            <Button type="submit" className="w-full" disabled={updateMutation.isPending}>
+            <Button type="submit" className="w-full h-11 rounded-xl font-semibold" disabled={updateMutation.isPending}>
               {updateMutation.isPending ? "Menyimpan..." : "Simpan Perubahan"}
             </Button>
           </form>

@@ -2,7 +2,6 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { LayoutDashboard, Sprout, Users, MapPin, BarChart3, Plus, LogOut, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 const navItems = [
@@ -37,50 +36,65 @@ const AppLayout = () => {
 
   return (
     <div className="min-h-dvh bg-background flex flex-col">
-      <header className="safe-top sticky top-0 z-30 bg-background/85 backdrop-blur-md border-b border-border">
-        <div className="max-w-2xl mx-auto px-5 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="size-9 rounded-xl gradient-earth flex items-center justify-center shadow-soft">
-              <Sprout className="size-5 text-primary-foreground" />
+      {/* iOS-style header */}
+      <header className="safe-top sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-border/60">
+        <div className="max-w-lg mx-auto px-4 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="size-8 rounded-lg gradient-earth flex items-center justify-center">
+              <Sprout className="size-4 text-primary-foreground" />
             </div>
             <div>
-              <div className="font-serif font-bold text-lg leading-none text-primary">TaniHub</div>
-              <div className="text-[11px] text-muted-foreground mt-0.5">{title}</div>
+              <div className="font-bold text-base leading-none tracking-tight">{title}</div>
             </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground hover:text-primary gap-1.5">
-            <LogOut className="size-4" />
-            <span className="text-xs">Keluar</span>
-          </Button>
+          <button
+            onClick={handleLogout}
+            className="text-muted-foreground hover:text-foreground transition-colors p-2 -mr-2"
+          >
+            <LogOut className="size-5" />
+          </button>
         </div>
       </header>
 
-      <main className="flex-1 max-w-2xl w-full mx-auto px-5 py-5 pb-28 animate-fade-in">
+      <main className="flex-1 max-w-lg w-full mx-auto px-4 py-4 pb-24">
         <Outlet />
       </main>
 
-      <nav className="safe-bottom fixed bottom-0 inset-x-0 z-30 bg-card/95 backdrop-blur-md border-t border-border shadow-card">
-        <div className="max-w-2xl mx-auto px-2 py-2 grid grid-cols-6 gap-1">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                cn(
-                  "flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition-all",
-                  item.isCta
-                    ? "gradient-leaf text-success-foreground shadow-cta scale-110 -mt-5 size-14 self-center"
-                    : isActive
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-primary"
-                )
-              }
-            >
-              <item.icon className={cn(item.isCta ? "size-6" : "size-5")} strokeWidth={2.2} />
-              {!item.isCta && <span className="text-[10px] font-medium">{item.label}</span>}
-            </NavLink>
-          ))}
+      {/* iOS-style tab bar */}
+      <nav className="safe-bottom fixed bottom-0 inset-x-0 z-30 bg-card/90 backdrop-blur-xl border-t border-border/60">
+        <div className="max-w-lg mx-auto px-1 pt-1.5 pb-1 grid grid-cols-6">
+          {navItems.map((item) => {
+            if (item.isCta) {
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className="flex flex-col items-center justify-center py-1"
+                >
+                  <div className="size-11 rounded-full gradient-leaf flex items-center justify-center shadow-cta -mt-4 press-effect">
+                    <Plus className="size-5 text-primary-foreground" strokeWidth={2.5} />
+                  </div>
+                </NavLink>
+              );
+            }
+
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                className={({ isActive }) =>
+                  cn(
+                    "flex flex-col items-center justify-center gap-0.5 py-1.5 transition-colors press-effect",
+                    isActive ? "text-primary" : "text-muted-foreground"
+                  )
+                }
+              >
+                <item.icon className="size-5" strokeWidth={1.8} />
+                <span className="text-[10px] font-medium leading-none">{item.label}</span>
+              </NavLink>
+            );
+          })}
         </div>
       </nav>
     </div>

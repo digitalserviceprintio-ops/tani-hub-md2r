@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, MapPin, Trash2 } from "lucide-react";
+import { Plus, MapPin, Trash2, ChevronRight } from "lucide-react";
 
 interface Blok {
   id: string;
@@ -65,64 +64,62 @@ const BlokPage = () => {
         <p className="text-sm text-muted-foreground">{list.length} blok terdaftar</p>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" className="gradient-leaf text-success-foreground shadow-soft">
+            <Button size="sm" className="rounded-full h-9 px-4 font-semibold">
               <Plus className="size-4 mr-1" /> Blok
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
-            <DialogHeader><DialogTitle className="font-serif">Tambah Blok Baru</DialogTitle></DialogHeader>
+          <DialogContent className="max-w-md rounded-2xl">
+            <DialogHeader><DialogTitle>Tambah Blok Baru</DialogTitle></DialogHeader>
             <div className="space-y-3">
               <div>
                 <Label>Kode Blok</Label>
-                <Input placeholder="A1" value={form.kode} onChange={(e) => setForm({ ...form, kode: e.target.value })} maxLength={20} className="mt-1.5" />
+                <Input placeholder="A1" value={form.kode} onChange={(e) => setForm({ ...form, kode: e.target.value })} maxLength={20} className="mt-1.5 h-11 rounded-xl bg-muted/50 border-0" />
               </div>
               <div>
                 <Label>Nama Blok</Label>
-                <Input placeholder="Blok Mawar" value={form.nama} onChange={(e) => setForm({ ...form, nama: e.target.value })} maxLength={100} className="mt-1.5" />
+                <Input placeholder="Blok Mawar" value={form.nama} onChange={(e) => setForm({ ...form, nama: e.target.value })} maxLength={100} className="mt-1.5 h-11 rounded-xl bg-muted/50 border-0" />
               </div>
               <div>
                 <Label>Luas (hektar)</Label>
-                <Input type="number" step="0.01" placeholder="0.00" value={form.luas_hektar} onChange={(e) => setForm({ ...form, luas_hektar: e.target.value })} className="mt-1.5" />
+                <Input type="number" step="0.01" placeholder="0.00" value={form.luas_hektar} onChange={(e) => setForm({ ...form, luas_hektar: e.target.value })} className="mt-1.5 h-11 rounded-xl bg-muted/50 border-0" />
               </div>
               <div>
                 <Label>Catatan</Label>
-                <Textarea rows={2} maxLength={500} value={form.catatan} onChange={(e) => setForm({ ...form, catatan: e.target.value })} className="mt-1.5" />
+                <Textarea rows={2} maxLength={500} value={form.catatan} onChange={(e) => setForm({ ...form, catatan: e.target.value })} className="mt-1.5 rounded-xl bg-muted/50 border-0" />
               </div>
             </div>
             <DialogFooter>
-              <Button onClick={save} className="gradient-leaf text-success-foreground">Simpan</Button>
+              <Button onClick={save} className="w-full h-11 rounded-xl font-semibold">Simpan</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
       {list.length === 0 ? (
-        <Card className="p-8 text-center border-dashed">
+        <div className="native-card p-8 text-center">
           <MapPin className="size-8 mx-auto text-muted-foreground mb-2" />
           <p className="text-sm text-muted-foreground">Belum ada blok. Tambahkan blok pertama Anda.</p>
-        </Card>
+        </div>
       ) : (
-        <ul className="space-y-2.5">
-          {list.map((b) => (
-            <li key={b.id}>
-              <Card className="p-4 flex items-center justify-between border-border shadow-soft">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded-md bg-secondary text-secondary-foreground text-xs font-bold">{b.kode}</span>
-                    <span className="font-semibold text-primary truncate">{b.nama}</span>
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    Luas: {Number(b.luas_hektar).toFixed(2)} ha
-                    {b.catatan && ` · ${b.catatan}`}
-                  </div>
+        <div className="native-card overflow-hidden">
+          {list.map((b, idx) => (
+            <div key={b.id} className={`native-list-item press-effect ${idx < list.length - 1 ? '' : 'border-0'}`}>
+              <div className="size-10 rounded-xl bg-secondary flex items-center justify-center shrink-0">
+                <span className="text-xs font-bold text-primary">{b.kode}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-sm truncate">{b.nama}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">
+                  {Number(b.luas_hektar).toFixed(2)} ha
+                  {b.catatan && ` · ${b.catatan}`}
                 </div>
-                <Button size="icon" variant="ghost" onClick={() => remove(b.id)} className="text-destructive hover:bg-destructive/10 shrink-0">
-                  <Trash2 className="size-4" />
-                </Button>
-              </Card>
-            </li>
+              </div>
+              <button onClick={() => remove(b.id)} className="p-2 text-destructive/60 hover:text-destructive transition-colors">
+                <Trash2 className="size-4" />
+              </button>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

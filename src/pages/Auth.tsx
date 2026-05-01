@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Sprout, Loader2 } from "lucide-react";
@@ -63,89 +62,58 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-dvh bg-background flex flex-col items-center justify-center px-5 py-10">
+    <div className="min-h-dvh bg-background flex flex-col items-center justify-center px-6 py-10">
       <div className="w-full max-w-sm">
-        <div className="flex flex-col items-center mb-8">
-          <div className="size-16 rounded-2xl gradient-earth flex items-center justify-center shadow-soft mb-4">
-            <Sprout className="size-8 text-primary-foreground" />
+        {/* Logo */}
+        <div className="flex flex-col items-center mb-10">
+          <div className="size-20 rounded-3xl gradient-earth flex items-center justify-center shadow-cta mb-5">
+            <Sprout className="size-10 text-primary-foreground" />
           </div>
-          <h1 className="font-serif font-bold text-3xl text-primary">TaniHub</h1>
+          <h1 className="font-bold text-3xl tracking-tight">TaniHub</h1>
           <p className="text-sm text-muted-foreground mt-1">Manajemen Panen Plasma Sawit</p>
         </div>
 
-        <Card className="p-6 shadow-card">
+        {/* Auth Card */}
+        <div className="native-card p-5">
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid grid-cols-2 w-full mb-6">
-              <TabsTrigger value="login">Masuk</TabsTrigger>
-              <TabsTrigger value="signup">Daftar</TabsTrigger>
+            <TabsList className="grid grid-cols-2 w-full mb-5 h-10 bg-muted rounded-lg p-0.5">
+              <TabsTrigger value="login" className="rounded-md text-sm font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm">Masuk</TabsTrigger>
+              <TabsTrigger value="signup" className="rounded-md text-sm font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm">Daftar</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
-                  <Input
-                    id="login-email"
-                    type="email"
-                    placeholder="nama@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    autoComplete="email"
-                  />
+                <div className="space-y-1.5">
+                  <Label htmlFor="login-email" className="text-sm">Email</Label>
+                  <Input id="login-email" type="email" placeholder="nama@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" className="h-12 rounded-xl bg-muted/50 border-0 focus-visible:ring-1" />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="login-password">Password</Label>
-                  <Input
-                    id="login-password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    autoComplete="current-password"
-                  />
+                <div className="space-y-1.5">
+                  <Label htmlFor="login-password" className="text-sm">Password</Label>
+                  <Input id="login-password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" className="h-12 rounded-xl bg-muted/50 border-0 focus-visible:ring-1" />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? <Loader2 className="size-4 animate-spin" /> : "Masuk"}
+                <Button type="submit" className="w-full h-12 rounded-xl font-semibold text-base" disabled={loading}>
+                  {loading ? <Loader2 className="size-5 animate-spin" /> : "Masuk"}
                 </Button>
               </form>
             </TabsContent>
 
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder="nama@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    autoComplete="email"
-                  />
+                <div className="space-y-1.5">
+                  <Label htmlFor="signup-email" className="text-sm">Email</Label>
+                  <Input id="signup-email" type="email" placeholder="nama@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" className="h-12 rounded-xl bg-muted/50 border-0 focus-visible:ring-1" />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    placeholder="Minimal 6 karakter"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    autoComplete="new-password"
-                  />
+                <div className="space-y-1.5">
+                  <Label htmlFor="signup-password" className="text-sm">Password</Label>
+                  <Input id="signup-password" type="password" placeholder="Minimal 6 karakter" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} autoComplete="new-password" className="h-12 rounded-xl bg-muted/50 border-0 focus-visible:ring-1" />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? <Loader2 className="size-4 animate-spin" /> : "Buat Akun"}
+                <Button type="submit" className="w-full h-12 rounded-xl font-semibold text-base" disabled={loading}>
+                  {loading ? <Loader2 className="size-5 animate-spin" /> : "Buat Akun"}
                 </Button>
               </form>
             </TabsContent>
           </Tabs>
-        </Card>
+        </div>
 
         <p className="text-center text-xs text-muted-foreground mt-6">
           Dengan masuk, Anda menyetujui ketentuan penggunaan TaniHub
