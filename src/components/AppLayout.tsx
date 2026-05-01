@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Sprout, Users, MapPin, BarChart3, Plus, LogOut } from "lucide-react";
+import { LayoutDashboard, Sprout, Users, MapPin, BarChart3, Plus, LogOut, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
