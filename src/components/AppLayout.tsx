@@ -59,7 +59,7 @@ const AppLayout = () => {
       </main>
 
       <nav className="safe-bottom fixed bottom-0 inset-x-0 z-30 bg-card/95 backdrop-blur-md border-t border-border shadow-card">
-        <div className="max-w-2xl mx-auto px-2 py-2 grid grid-cols-5 gap-1">
+        <div className="max-w-2xl mx-auto px-2 py-2 grid grid-cols-6 gap-1">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
