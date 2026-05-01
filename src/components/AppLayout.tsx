@@ -20,6 +20,7 @@ const titles: Record<string, string> = {
   "/petani": "Petani Plasma",
   "/blok": "Data Blok",
   "/perawatan": "Perawatan",
+  "/rekap-perawatan": "Rekap Perawatan",
   "/laporan": "Laporan & Rekap",
 };
 

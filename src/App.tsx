@@ -10,6 +10,7 @@ import PetaniPage from "./pages/PetaniPage";
 import BlokPage from "./pages/BlokPage";
 import Laporan from "./pages/Laporan";
 import PerawatanPage from "./pages/PerawatanPage";
+import RekapPerawatan from "./pages/RekapPerawatan";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/blok" element={<BlokPage />} />
             <Route path="/laporan" element={<Laporan />} />
             <Route path="/perawatan" element={<PerawatanPage />} />
+            <Route path="/rekap-perawatan" element={<RekapPerawatan />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

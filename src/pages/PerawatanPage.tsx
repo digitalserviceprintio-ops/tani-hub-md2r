@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,12 +9,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Trash2, Wrench, Plus } from "lucide-react";
+import { Trash2, Wrench, Plus, BarChart3 } from "lucide-react";
 
 const JENIS_OPTIONS = ["Pemupukan", "Penyemprotan", "Pruning", "Penyiangan", "Penyulaman", "Lainnya"];
 
 const PerawatanPage = () => {
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [jenis, setJenis] = useState("");
   const [blokId, setBlokId] = useState("");
@@ -88,10 +90,16 @@ const PerawatanPage = () => {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-serif font-bold text-primary">Perawatan</h1>
-        <Button size="sm" onClick={() => setShowForm(!showForm)} className="gap-1.5">
-          <Plus className="size-4" />
-          Tambah
-        </Button>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={() => navigate("/rekap-perawatan")} className="gap-1.5">
+            <BarChart3 className="size-4" />
+            Rekap
+          </Button>
+          <Button size="sm" onClick={() => setShowForm(!showForm)} className="gap-1.5">
+            <Plus className="size-4" />
+            Tambah
+          </Button>
+        </div>
       </div>
 
       {showForm && (
