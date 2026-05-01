@@ -20,6 +20,7 @@ const titles: Record<string, string> = {
   "/petani": "Petani Plasma",
   "/blok": "Data Blok",
   "/perawatan": "Perawatan",
+  "/laporan": "Laporan & Rekap",
 };
 
 const AppLayout = () => {
