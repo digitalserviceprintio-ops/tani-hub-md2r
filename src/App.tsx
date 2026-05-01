@@ -10,6 +10,7 @@ import PetaniPage from "./pages/PetaniPage";
 import BlokPage from "./pages/BlokPage";
 import Laporan from "./pages/Laporan";
 import PerawatanPage from "./pages/PerawatanPage";
+import RekapPerawatan from "./pages/RekapPerawatan";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
