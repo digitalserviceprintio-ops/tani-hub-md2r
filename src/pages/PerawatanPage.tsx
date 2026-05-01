@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Trash2, Wrench, Plus } from "lucide-react";
+import { Trash2, Wrench, Plus, BarChart3 } from "lucide-react";
 
 const JENIS_OPTIONS = ["Pemupukan", "Penyemprotan", "Pruning", "Penyiangan", "Penyulaman", "Lainnya"];
 
