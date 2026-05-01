@@ -19,7 +19,7 @@ const titles: Record<string, string> = {
   "/input": "Input Panen",
   "/petani": "Petani Plasma",
   "/blok": "Data Blok",
-  "/laporan": "Laporan & Rekap",
+  "/perawatan": "Perawatan",
 };
 
 const AppLayout = () => {
