@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Sprout, Users, MapPin, BarChart3, Plus, LogOut } from "lucide-react";
+import { LayoutDashboard, Sprout, Users, MapPin, BarChart3, Plus, LogOut, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ const navItems = [
   { to: "/petani", icon: Users, label: "Petani" },
   { to: "/input", icon: Plus, label: "Panen", isCta: true },
   { to: "/blok", icon: MapPin, label: "Blok" },
+  { to: "/perawatan", icon: Wrench, label: "Rawat" },
   { to: "/laporan", icon: BarChart3, label: "Laporan" },
 ];
 
@@ -18,6 +19,7 @@ const titles: Record<string, string> = {
   "/input": "Input Panen",
   "/petani": "Petani Plasma",
   "/blok": "Data Blok",
+  "/perawatan": "Perawatan",
   "/laporan": "Laporan & Rekap",
 };
 
@@ -57,7 +59,7 @@ const AppLayout = () => {
       </main>
 
       <nav className="safe-bottom fixed bottom-0 inset-x-0 z-30 bg-card/95 backdrop-blur-md border-t border-border shadow-card">
-        <div className="max-w-2xl mx-auto px-2 py-2 grid grid-cols-5 gap-1">
+        <div className="max-w-2xl mx-auto px-2 py-2 grid grid-cols-6 gap-1">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
