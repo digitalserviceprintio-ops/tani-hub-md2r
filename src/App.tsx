@@ -38,6 +38,7 @@ const App = () => (
             <Route path="/blok" element={<BlokPage />} />
             <Route path="/laporan" element={<Laporan />} />
             <Route path="/perawatan" element={<PerawatanPage />} />
+            <Route path="/rekap-perawatan" element={<RekapPerawatan />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
