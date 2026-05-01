@@ -10,6 +10,7 @@ const navItems = [
   { to: "/petani", icon: Users, label: "Petani" },
   { to: "/input", icon: Plus, label: "Panen", isCta: true },
   { to: "/blok", icon: MapPin, label: "Blok" },
+  { to: "/perawatan", icon: Wrench, label: "Rawat" },
   { to: "/laporan", icon: BarChart3, label: "Laporan" },
 ];
 
