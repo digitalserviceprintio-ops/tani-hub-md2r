@@ -15,6 +15,7 @@ const JENIS_OPTIONS = ["Pemupukan", "Penyemprotan", "Pruning", "Penyiangan", "Pe
 
 const PerawatanPage = () => {
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [jenis, setJenis] = useState("");
   const [blokId, setBlokId] = useState("");
