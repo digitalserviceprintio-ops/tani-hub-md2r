@@ -8,8 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Trash2, Wrench, Plus, BarChart3 } from "lucide-react";
+import { Trash2, Wrench, Plus, BarChart3, Pencil } from "lucide-react";
 
 const JENIS_OPTIONS = ["Pemupukan", "Penyemprotan", "Pruning", "Penyiangan", "Penyulaman", "Lainnya"];
 
@@ -21,6 +22,13 @@ const PerawatanPage = () => {
   const [blokId, setBlokId] = useState("");
   const [tanggal, setTanggal] = useState(new Date().toISOString().slice(0, 10));
   const [keterangan, setKeterangan] = useState("");
+
+  // Edit state
+  const [editItem, setEditItem] = useState<any>(null);
+  const [editJenis, setEditJenis] = useState("");
+  const [editBlokId, setEditBlokId] = useState("");
+  const [editTanggal, setEditTanggal] = useState("");
+  const [editKeterangan, setEditKeterangan] = useState("");
 
   const { data: blokList = [] } = useQuery({
     queryKey: ["blok"],
@@ -65,6 +73,24 @@ const PerawatanPage = () => {
     onError: (e: any) => toast.error(e.message),
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("perawatan").update({
+        blok_id: editBlokId,
+        jenis: editJenis,
+        tanggal: editTanggal,
+        keterangan: editKeterangan || null,
+      }).eq("id", editItem.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["perawatan"] });
+      toast.success("Data perawatan diperbarui");
+      setEditItem(null);
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("perawatan").delete().eq("id", id);
@@ -85,6 +111,64 @@ const PerawatanPage = () => {
     }
     addMutation.mutate();
   };
+
+  const handleEdit = (item: any) => {
+    setEditItem(item);
+    setEditJenis(item.jenis);
+    setEditBlokId(item.blok_id);
+    setEditTanggal(item.tanggal);
+    setEditKeterangan(item.keterangan || "");
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editJenis || !editBlokId) {
+      toast.error("Pilih blok dan jenis perawatan");
+      return;
+    }
+    updateMutation.mutate();
+  };
+
+  const formFields = (
+    prefix: "add" | "edit",
+    values: { jenis: string; blokId: string; tanggal: string; keterangan: string },
+    setters: { setJenis: (v: string) => void; setBlokId: (v: string) => void; setTanggal: (v: string) => void; setKeterangan: (v: string) => void }
+  ) => (
+    <>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <Label>Blok</Label>
+          <Select value={values.blokId} onValueChange={setters.setBlokId}>
+            <SelectTrigger><SelectValue placeholder="Pilih blok" /></SelectTrigger>
+            <SelectContent>
+              {blokList.map((b: any) => (
+                <SelectItem key={b.id} value={b.id}>{b.kode} - {b.nama}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-1.5">
+          <Label>Jenis</Label>
+          <Select value={values.jenis} onValueChange={setters.setJenis}>
+            <SelectTrigger><SelectValue placeholder="Pilih jenis" /></SelectTrigger>
+            <SelectContent>
+              {JENIS_OPTIONS.map((j) => (
+                <SelectItem key={j} value={j}>{j}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      <div className="space-y-1.5">
+        <Label>Tanggal</Label>
+        <Input type="date" value={values.tanggal} onChange={(e) => setters.setTanggal(e.target.value)} />
+      </div>
+      <div className="space-y-1.5">
+        <Label>Keterangan</Label>
+        <Textarea value={values.keterangan} onChange={(e) => setters.setKeterangan(e.target.value)} placeholder="Catatan tambahan (opsional)" rows={2} />
+      </div>
+    </>
+  );
 
   return (
     <div className="space-y-5">
@@ -109,38 +193,7 @@ const PerawatanPage = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label>Blok</Label>
-                  <Select value={blokId} onValueChange={setBlokId}>
-                    <SelectTrigger><SelectValue placeholder="Pilih blok" /></SelectTrigger>
-                    <SelectContent>
-                      {blokList.map((b: any) => (
-                        <SelectItem key={b.id} value={b.id}>{b.kode} - {b.nama}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label>Jenis</Label>
-                  <Select value={jenis} onValueChange={setJenis}>
-                    <SelectTrigger><SelectValue placeholder="Pilih jenis" /></SelectTrigger>
-                    <SelectContent>
-                      {JENIS_OPTIONS.map((j) => (
-                        <SelectItem key={j} value={j}>{j}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label>Tanggal</Label>
-                <Input type="date" value={tanggal} onChange={(e) => setTanggal(e.target.value)} />
-              </div>
-              <div className="space-y-1.5">
-                <Label>Keterangan</Label>
-                <Textarea value={keterangan} onChange={(e) => setKeterangan(e.target.value)} placeholder="Catatan tambahan (opsional)" rows={2} />
-              </div>
+              {formFields("add", { jenis, blokId, tanggal, keterangan }, { setJenis, setBlokId, setTanggal, setKeterangan })}
               <Button type="submit" className="w-full" disabled={addMutation.isPending}>
                 {addMutation.isPending ? "Menyimpan..." : "Simpan"}
               </Button>
@@ -172,14 +225,37 @@ const PerawatanPage = () => {
                     )}
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => deleteMutation.mutate(item.id)}>
-                  <Trash2 className="size-4" />
-                </Button>
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="icon" onClick={() => handleEdit(item)}>
+                    <Pencil className="size-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="text-destructive" onClick={() => deleteMutation.mutate(item.id)}>
+                    <Trash2 className="size-4" />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
+
+      {/* Edit Dialog */}
+      <Dialog open={!!editItem} onOpenChange={(open) => { if (!open) setEditItem(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Perawatan</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleEditSubmit} className="space-y-4">
+            {formFields("edit",
+              { jenis: editJenis, blokId: editBlokId, tanggal: editTanggal, keterangan: editKeterangan },
+              { setJenis: setEditJenis, setBlokId: setEditBlokId, setTanggal: setEditTanggal, setKeterangan: setEditKeterangan }
+            )}
+            <Button type="submit" className="w-full" disabled={updateMutation.isPending}>
+              {updateMutation.isPending ? "Menyimpan..." : "Simpan Perubahan"}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
