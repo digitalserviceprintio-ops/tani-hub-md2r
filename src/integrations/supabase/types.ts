@@ -95,6 +95,44 @@ export type Database = {
           },
         ]
       }
+      perawatan: {
+        Row: {
+          blok_id: string
+          created_at: string
+          id: string
+          jenis: string
+          keterangan: string | null
+          tanggal: string
+          user_id: string | null
+        }
+        Insert: {
+          blok_id: string
+          created_at?: string
+          id?: string
+          jenis: string
+          keterangan?: string | null
+          tanggal?: string
+          user_id?: string | null
+        }
+        Update: {
+          blok_id?: string
+          created_at?: string
+          id?: string
+          jenis?: string
+          keterangan?: string | null
+          tanggal?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "perawatan_blok_id_fkey"
+            columns: ["blok_id"]
+            isOneToOne: false
+            referencedRelation: "blok"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       petani: {
         Row: {
           alamat: string | null
