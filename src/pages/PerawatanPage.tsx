@@ -89,10 +89,16 @@ const PerawatanPage = () => {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-serif font-bold text-primary">Perawatan</h1>
-        <Button size="sm" onClick={() => setShowForm(!showForm)} className="gap-1.5">
-          <Plus className="size-4" />
-          Tambah
-        </Button>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={() => navigate("/rekap-perawatan")} className="gap-1.5">
+            <BarChart3 className="size-4" />
+            Rekap
+          </Button>
+          <Button size="sm" onClick={() => setShowForm(!showForm)} className="gap-1.5">
+            <Plus className="size-4" />
+            Tambah
+          </Button>
+        </div>
       </div>
 
       {showForm && (
