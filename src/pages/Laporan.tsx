@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { format, subDays } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FileSpreadsheet, FileText } from "lucide-react";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
@@ -185,48 +185,12 @@ const Laporan = () => {
           <TabsTrigger value="detail">Detail</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="blok" className="space-y-3 mt-3">
-          {perBlok.length > 0 && (
-            <Card className="p-3 shadow-soft border-border">
-              <div className="h-48">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={perBlok.slice(0, 8)}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                    <XAxis dataKey="label" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
-                    <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
-                    <Tooltip
-                      contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem", fontSize: "12px" }}
-                      formatter={(v: number) => [`${v.toFixed(2)} ton`, "Tonase"]}
-                    />
-                    <Bar dataKey="ton" fill="hsl(var(--success))" radius={[6, 6, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
-          )}
-          <RekapList items={perBlok} />
+        <TabsContent value="blok" className="mt-3">
+          <RekapTable items={perBlok} headerLabel="Blok" />
         </TabsContent>
 
-        <TabsContent value="petani" className="space-y-3 mt-3">
-          {perPetani.length > 0 && (
-            <Card className="p-3 shadow-soft border-border">
-              <div className="h-48">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={perPetani.slice(0, 8)}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                    <XAxis dataKey="label" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} />
-                    <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
-                    <Tooltip
-                      contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem", fontSize: "12px" }}
-                      formatter={(v: number) => [`${v.toFixed(2)} ton`, "Tonase"]}
-                    />
-                    <Bar dataKey="ton" fill="hsl(var(--accent))" radius={[6, 6, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
-          )}
-          <RekapList items={perPetani} />
+        <TabsContent value="petani" className="mt-3">
+          <RekapTable items={perPetani} headerLabel="Petani" />
         </TabsContent>
 
         <TabsContent value="detail" className="mt-3">
@@ -235,19 +199,30 @@ const Laporan = () => {
           ) : rows.length === 0 ? (
             <Card className="p-8 text-center border-dashed text-muted-foreground text-sm">Tidak ada data dalam periode ini.</Card>
           ) : (
-            <ul className="space-y-2">
-              {rows.map((r) => (
-                <li key={r.id}>
-                  <Card className="p-3 flex items-center justify-between border-border shadow-soft text-sm">
-                    <div className="min-w-0">
-                      <div className="font-semibold text-primary truncate">{r.blok?.kode} • {r.petani?.nama}</div>
-                      <div className="text-xs text-muted-foreground">{format(new Date(r.tanggal), "d MMM yyyy", { locale: idLocale })} · {r.jumlah_janjang} janjang</div>
-                    </div>
-                    <div className="text-right shrink-0 ml-3 font-bold text-primary tabular-nums">{(Number(r.tonase_kg) / 1000).toFixed(2)} <span className="text-[10px] font-normal text-muted-foreground">ton</span></div>
-                  </Card>
-                </li>
-              ))}
-            </ul>
+            <Card className="border-border shadow-soft overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="h-10 px-3 text-xs">Tanggal</TableHead>
+                    <TableHead className="h-10 px-3 text-xs">Blok</TableHead>
+                    <TableHead className="h-10 px-3 text-xs">Petani</TableHead>
+                    <TableHead className="h-10 px-3 text-xs text-right">Janjang</TableHead>
+                    <TableHead className="h-10 px-3 text-xs text-right">Ton</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {rows.map((r) => (
+                    <TableRow key={r.id}>
+                      <TableCell className="p-2.5 px-3 text-xs whitespace-nowrap">{format(new Date(r.tanggal), "d MMM yy", { locale: idLocale })}</TableCell>
+                      <TableCell className="p-2.5 px-3 text-xs font-medium">{r.blok?.kode ?? "—"}</TableCell>
+                      <TableCell className="p-2.5 px-3 text-xs">{r.petani?.nama ?? "—"}</TableCell>
+                      <TableCell className="p-2.5 px-3 text-xs text-right tabular-nums">{r.jumlah_janjang}</TableCell>
+                      <TableCell className="p-2.5 px-3 text-xs text-right tabular-nums font-semibold">{(Number(r.tonase_kg) / 1000).toFixed(2)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Card>
           )}
         </TabsContent>
       </Tabs>
@@ -255,27 +230,37 @@ const Laporan = () => {
   );
 };
 
-const RekapList = ({ items }: { items: { label: string; ton: number; janjang: number }[] }) => {
+const RekapTable = ({ items, headerLabel }: { items: { label: string; ton: number; janjang: number }[]; headerLabel: string }) => {
   if (items.length === 0)
     return <Card className="p-8 text-center border-dashed text-muted-foreground text-sm">Belum ada data.</Card>;
-  const max = Math.max(...items.map((i) => i.ton));
+  const totalTon = items.reduce((s, i) => s + i.ton, 0);
+  const totalJanjang = items.reduce((s, i) => s + i.janjang, 0);
   return (
-    <ul className="space-y-2">
-      {items.map((x) => (
-        <li key={x.label}>
-          <Card className="p-3 border-border shadow-soft">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="font-semibold text-primary text-sm truncate">{x.label}</span>
-              <span className="font-bold text-primary tabular-nums text-sm">{x.ton.toFixed(2)} ton</span>
-            </div>
-            <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
-              <div className="h-full gradient-leaf" style={{ width: `${(x.ton / max) * 100}%` }} />
-            </div>
-            <div className="text-[11px] text-muted-foreground mt-1">{x.janjang.toLocaleString("id-ID")} janjang</div>
-          </Card>
-        </li>
-      ))}
-    </ul>
+    <Card className="border-border shadow-soft overflow-hidden">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="h-10 px-3 text-xs">{headerLabel}</TableHead>
+            <TableHead className="h-10 px-3 text-xs text-right">Janjang</TableHead>
+            <TableHead className="h-10 px-3 text-xs text-right">Ton</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {items.map((x) => (
+            <TableRow key={x.label}>
+              <TableCell className="p-2.5 px-3 text-xs font-medium">{x.label}</TableCell>
+              <TableCell className="p-2.5 px-3 text-xs text-right tabular-nums">{x.janjang.toLocaleString("id-ID")}</TableCell>
+              <TableCell className="p-2.5 px-3 text-xs text-right tabular-nums font-semibold">{x.ton.toFixed(2)}</TableCell>
+            </TableRow>
+          ))}
+          <TableRow className="bg-muted/50 font-semibold">
+            <TableCell className="p-2.5 px-3 text-xs">Total</TableCell>
+            <TableCell className="p-2.5 px-3 text-xs text-right tabular-nums">{totalJanjang.toLocaleString("id-ID")}</TableCell>
+            <TableCell className="p-2.5 px-3 text-xs text-right tabular-nums">{totalTon.toFixed(2)}</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </Card>
   );
 };
 
