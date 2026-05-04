@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Scale, Sprout, MapPin, TrendingUp, ChevronRight } from "lucide-react";
+import { Scale, Sprout, MapPin, TrendingUp, ChevronRight, Sparkles } from "lucide-react";
 import { format, startOfDay, subDays } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip, CartesianGrid } from "recharts";
@@ -64,6 +64,21 @@ const Dashboard = () => {
         <StatCard icon={Sprout} label="Total" value={totalJanjang.toLocaleString("id-ID")} unit="janjang" color="text-harvest" />
         <StatCard icon={MapPin} label="Aktif" value={String(blokCount)} unit="blok" color="text-blue-500" />
       </div>
+
+      {/* AI Assistant CTA */}
+      <Link
+        to="/asisten"
+        className="native-card p-4 flex items-center gap-3 press-effect block"
+      >
+        <div className="size-11 rounded-2xl gradient-leaf flex items-center justify-center shrink-0 shadow-cta">
+          <Sparkles className="size-5 text-primary-foreground" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold text-sm">Asisten Analisis</div>
+          <div className="text-xs text-muted-foreground">Pendapatan, tonase panen & perawatan</div>
+        </div>
+        <ChevronRight className="size-4 text-muted-foreground shrink-0" />
+      </Link>
 
       {/* Chart */}
       <div className="native-card p-4">
