@@ -5,6 +5,7 @@ import { format, startOfDay, subDays } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip, CartesianGrid } from "recharts";
 import { Link } from "react-router-dom";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface PanenRow {
   id: string;
@@ -134,27 +135,32 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className="native-card overflow-hidden">
-            {recent.map((r, idx) => (
-              <div key={r.id} className={`native-list-item ${idx < recent.length - 1 ? '' : 'border-0'}`}>
-                <div className="size-10 rounded-full bg-secondary flex items-center justify-center shrink-0">
-                  <Sprout className="size-4 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-sm truncate">
-                    {r.blok?.kode ?? "—"} · {r.petani?.nama ?? "—"}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {format(new Date(r.tanggal), "d MMM yyyy", { locale: idLocale })} · {r.jumlah_janjang} janjang
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <div className="font-bold tabular-nums text-sm">
-                    {(Number(r.tonase_kg) / 1000).toFixed(2)}
-                  </div>
-                  <div className="text-[10px] text-muted-foreground">ton</div>
-                </div>
-              </div>
-            ))}
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="h-9 px-3 text-xs">Tgl</TableHead>
+                  <TableHead className="h-9 px-3 text-xs">Blok</TableHead>
+                  <TableHead className="h-9 px-3 text-xs">Petani</TableHead>
+                  <TableHead className="h-9 px-3 text-xs text-right">Jjg</TableHead>
+                  <TableHead className="h-9 px-3 text-xs text-right">Ton</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recent.map((r) => (
+                  <TableRow key={r.id}>
+                    <TableCell className="p-2.5 px-3 text-xs whitespace-nowrap">
+                      {format(new Date(r.tanggal), "d MMM", { locale: idLocale })}
+                    </TableCell>
+                    <TableCell className="p-2.5 px-3 text-xs font-medium">{r.blok?.kode ?? "—"}</TableCell>
+                    <TableCell className="p-2.5 px-3 text-xs truncate max-w-[120px]">{r.petani?.nama ?? "—"}</TableCell>
+                    <TableCell className="p-2.5 px-3 text-xs text-right tabular-nums">{r.jumlah_janjang}</TableCell>
+                    <TableCell className="p-2.5 px-3 text-xs text-right tabular-nums font-semibold">
+                      {(Number(r.tonase_kg) / 1000).toFixed(2)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         )}
       </div>
