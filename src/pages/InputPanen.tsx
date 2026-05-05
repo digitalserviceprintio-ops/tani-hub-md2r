@@ -79,6 +79,29 @@ const InputPanen = () => {
       return;
     }
     setSaving(true);
+
+    let foto_url: string | null = null;
+    if (foto) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setSaving(false);
+        toast({ title: "Sesi habis", description: "Silakan login ulang.", variant: "destructive" });
+        return;
+      }
+      const ext = foto.name.split(".").pop() || "jpg";
+      const path = `${user.id}/${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("panen-foto").upload(path, foto, {
+        contentType: foto.type,
+        upsert: false,
+      });
+      if (upErr) {
+        setSaving(false);
+        toast({ title: "Gagal upload foto", description: upErr.message, variant: "destructive" });
+        return;
+      }
+      foto_url = supabase.storage.from("panen-foto").getPublicUrl(path).data.publicUrl;
+    }
+
     const payload = {
       tanggal: parsed.data.tanggal,
       blok_id: parsed.data.blok_id,
@@ -86,6 +109,7 @@ const InputPanen = () => {
       tonase_kg: parsed.data.tonase_kg,
       jumlah_janjang: parsed.data.jumlah_janjang,
       catatan: parsed.data.catatan ?? null,
+      foto_url,
     };
     const { error } = await supabase.from("panen").insert(payload);
     setSaving(false);
