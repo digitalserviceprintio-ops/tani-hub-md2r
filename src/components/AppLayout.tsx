@@ -100,6 +100,7 @@ const AppLayout = () => {
           })}
         </div>
       </nav>
+      <ChatFab />
     </div>
   );
 };
