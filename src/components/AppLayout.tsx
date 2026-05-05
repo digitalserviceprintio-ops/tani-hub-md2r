@@ -3,6 +3,7 @@ import { LayoutDashboard, Sprout, Users, MapPin, BarChart3, Plus, LogOut, Wrench
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import ChatFab from "./ChatFab";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard", end: true },
@@ -21,6 +22,7 @@ const titles: Record<string, string> = {
   "/perawatan": "Perawatan",
   "/rekap-perawatan": "Rekap Perawatan",
   "/asisten": "Asisten Analisis",
+  "/chat": "Live Chat Petani",
   "/laporan": "Laporan & Rekap",
 };
 

@@ -12,6 +12,7 @@ import Laporan from "./pages/Laporan";
 import PerawatanPage from "./pages/PerawatanPage";
 import RekapPerawatan from "./pages/RekapPerawatan";
 import Asisten from "./pages/Asisten";
+import Chat from "./pages/Chat";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/perawatan" element={<PerawatanPage />} />
             <Route path="/rekap-perawatan" element={<RekapPerawatan />} />
             <Route path="/asisten" element={<Asisten />} />
+            <Route path="/chat" element={<Chat />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
