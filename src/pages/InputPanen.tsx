@@ -181,6 +181,29 @@ const InputPanen = () => {
         </div>
 
         <div>
+          <Label className="text-sm">Foto Hasil Panen (opsional)</Label>
+          <input ref={cameraRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileChange} />
+          <input ref={galeriRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+          {fotoPreview ? (
+            <div className="mt-1.5 relative rounded-xl overflow-hidden border border-border">
+              <img src={fotoPreview} alt="Preview foto panen" className="w-full h-48 object-cover" />
+              <button type="button" onClick={clearFoto} className="absolute top-2 right-2 bg-background/90 rounded-full p-1.5 shadow">
+                <X className="size-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="mt-1.5 grid grid-cols-2 gap-2">
+              <Button type="button" variant="outline" className="h-11 rounded-xl" onClick={() => cameraRef.current?.click()}>
+                <Camera className="size-4 mr-1.5" /> Kamera
+              </Button>
+              <Button type="button" variant="outline" className="h-11 rounded-xl" onClick={() => galeriRef.current?.click()}>
+                <ImageIcon className="size-4 mr-1.5" /> Galeri
+              </Button>
+            </div>
+          )}
+        </div>
+
+        <div>
           <Label htmlFor="catatan" className="text-sm">Catatan (opsional)</Label>
           <Textarea id="catatan" rows={2} maxLength={500} placeholder="Cuaca, kualitas buah, dll." value={form.catatan} onChange={(e) => setForm({ ...form, catatan: e.target.value })} className="mt-1.5 rounded-xl bg-muted/50 border-0" />
         </div>
