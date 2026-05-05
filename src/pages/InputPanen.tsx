@@ -25,6 +25,10 @@ const InputPanen = () => {
   const [bloks, setBloks] = useState<{ id: string; kode: string; nama: string }[]>([]);
   const [petanis, setPetanis] = useState<{ id: string; nama: string }[]>([]);
   const [saving, setSaving] = useState(false);
+  const [foto, setFoto] = useState<File | null>(null);
+  const [fotoPreview, setFotoPreview] = useState<string>("");
+  const cameraRef = useRef<HTMLInputElement>(null);
+  const galeriRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
     tanggal: new Date().toISOString().slice(0, 10),
     blok_id: "",
@@ -33,6 +37,24 @@ const InputPanen = () => {
     jumlah_janjang: "",
     catatan: "",
   });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 8 * 1024 * 1024) {
+      toast({ title: "File terlalu besar", description: "Maksimal 8 MB.", variant: "destructive" });
+      return;
+    }
+    setFoto(file);
+    setFotoPreview(URL.createObjectURL(file));
+  };
+
+  const clearFoto = () => {
+    setFoto(null);
+    setFotoPreview("");
+    if (cameraRef.current) cameraRef.current.value = "";
+    if (galeriRef.current) galeriRef.current.value = "";
+  };
 
   useEffect(() => {
     (async () => {
