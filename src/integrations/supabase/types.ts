@@ -140,6 +140,7 @@ export type Database = {
         Row: {
           alamat: string | null
           created_at: string
+          foto_url: string | null
           id: string
           nama: string
           nik: string | null
@@ -149,6 +150,7 @@ export type Database = {
         Insert: {
           alamat?: string | null
           created_at?: string
+          foto_url?: string | null
           id?: string
           nama: string
           nik?: string | null
@@ -158,6 +160,7 @@ export type Database = {
         Update: {
           alamat?: string | null
           created_at?: string
+          foto_url?: string | null
           id?: string
           nama?: string
           nik?: string | null
