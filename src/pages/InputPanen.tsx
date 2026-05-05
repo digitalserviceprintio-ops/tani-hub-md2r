@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { Save, CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Camera, Image as ImageIcon, X } from "lucide-react";
 import { z } from "zod";
 
 const schema = z.object({
@@ -25,6 +25,10 @@ const InputPanen = () => {
   const [bloks, setBloks] = useState<{ id: string; kode: string; nama: string }[]>([]);
   const [petanis, setPetanis] = useState<{ id: string; nama: string }[]>([]);
   const [saving, setSaving] = useState(false);
+  const [foto, setFoto] = useState<File | null>(null);
+  const [fotoPreview, setFotoPreview] = useState<string>("");
+  const cameraRef = useRef<HTMLInputElement>(null);
+  const galeriRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
     tanggal: new Date().toISOString().slice(0, 10),
     blok_id: "",
@@ -33,6 +37,24 @@ const InputPanen = () => {
     jumlah_janjang: "",
     catatan: "",
   });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 8 * 1024 * 1024) {
+      toast({ title: "File terlalu besar", description: "Maksimal 8 MB.", variant: "destructive" });
+      return;
+    }
+    setFoto(file);
+    setFotoPreview(URL.createObjectURL(file));
+  };
+
+  const clearFoto = () => {
+    setFoto(null);
+    setFotoPreview("");
+    if (cameraRef.current) cameraRef.current.value = "";
+    if (galeriRef.current) galeriRef.current.value = "";
+  };
 
   useEffect(() => {
     (async () => {
@@ -57,6 +79,29 @@ const InputPanen = () => {
       return;
     }
     setSaving(true);
+
+    let foto_url: string | null = null;
+    if (foto) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setSaving(false);
+        toast({ title: "Sesi habis", description: "Silakan login ulang.", variant: "destructive" });
+        return;
+      }
+      const ext = foto.name.split(".").pop() || "jpg";
+      const path = `${user.id}/${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("panen-foto").upload(path, foto, {
+        contentType: foto.type,
+        upsert: false,
+      });
+      if (upErr) {
+        setSaving(false);
+        toast({ title: "Gagal upload foto", description: upErr.message, variant: "destructive" });
+        return;
+      }
+      foto_url = supabase.storage.from("panen-foto").getPublicUrl(path).data.publicUrl;
+    }
+
     const payload = {
       tanggal: parsed.data.tanggal,
       blok_id: parsed.data.blok_id,
@@ -64,6 +109,7 @@ const InputPanen = () => {
       tonase_kg: parsed.data.tonase_kg,
       jumlah_janjang: parsed.data.jumlah_janjang,
       catatan: parsed.data.catatan ?? null,
+      foto_url,
     };
     const { error } = await supabase.from("panen").insert(payload);
     setSaving(false);
@@ -132,6 +178,29 @@ const InputPanen = () => {
             <Label htmlFor="janjang" className="text-sm">Jumlah Janjang</Label>
             <Input id="janjang" type="number" inputMode="numeric" placeholder="0" value={form.jumlah_janjang} onChange={(e) => setForm({ ...form, jumlah_janjang: e.target.value })} className="mt-1.5 h-11 rounded-xl bg-muted/50 border-0" />
           </div>
+        </div>
+
+        <div>
+          <Label className="text-sm">Foto Hasil Panen (opsional)</Label>
+          <input ref={cameraRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileChange} />
+          <input ref={galeriRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+          {fotoPreview ? (
+            <div className="mt-1.5 relative rounded-xl overflow-hidden border border-border">
+              <img src={fotoPreview} alt="Preview foto panen" className="w-full h-48 object-cover" />
+              <button type="button" onClick={clearFoto} className="absolute top-2 right-2 bg-background/90 rounded-full p-1.5 shadow">
+                <X className="size-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="mt-1.5 grid grid-cols-2 gap-2">
+              <Button type="button" variant="outline" className="h-11 rounded-xl" onClick={() => cameraRef.current?.click()}>
+                <Camera className="size-4 mr-1.5" /> Kamera
+              </Button>
+              <Button type="button" variant="outline" className="h-11 rounded-xl" onClick={() => galeriRef.current?.click()}>
+                <ImageIcon className="size-4 mr-1.5" /> Galeri
+              </Button>
+            </div>
+          )}
         </div>
 
         <div>

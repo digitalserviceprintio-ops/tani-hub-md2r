@@ -49,6 +49,7 @@ export type Database = {
           blok_id: string
           catatan: string | null
           created_at: string
+          foto_url: string | null
           id: string
           jumlah_janjang: number
           petani_id: string
@@ -60,6 +61,7 @@ export type Database = {
           blok_id: string
           catatan?: string | null
           created_at?: string
+          foto_url?: string | null
           id?: string
           jumlah_janjang?: number
           petani_id: string
@@ -71,6 +73,7 @@ export type Database = {
           blok_id?: string
           catatan?: string | null
           created_at?: string
+          foto_url?: string | null
           id?: string
           jumlah_janjang?: number
           petani_id?: string
