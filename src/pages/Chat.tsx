@@ -22,7 +22,7 @@ interface Msg {
   created_at: string;
 }
 
-const ME_KEY = "chat-me-petani";
+
 
 const Chat = () => {
   const [petaniList, setPetaniList] = useState<Petani[]>([]);
