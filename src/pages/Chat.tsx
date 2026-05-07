@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { clearUnread, getUnreadMap, onUnreadChange, ME_KEY } from "@/lib/chatUnread";
 
 interface Petani {
   id: string;
