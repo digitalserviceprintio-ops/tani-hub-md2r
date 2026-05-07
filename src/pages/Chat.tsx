@@ -31,7 +31,21 @@ const Chat = () => {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [search, setSearch] = useState("");
+  const [unreadMap, setUnreadMap] = useState<Record<string, number>>(() => getUnreadMap());
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => onUnreadChange(() => setUnreadMap(getUnreadMap())), []);
+
+  // Track active chat in sessionStorage so notifier can suppress toasts
+  useEffect(() => {
+    if (activeId) {
+      sessionStorage.setItem("chat-active-id", activeId);
+      clearUnread(activeId);
+    } else {
+      sessionStorage.removeItem("chat-active-id");
+    }
+    return () => sessionStorage.removeItem("chat-active-id");
+  }, [activeId]);
 
   useEffect(() => {
     supabase.from("petani").select("id,nama,foto_url").order("nama").then(({ data }) => {
@@ -225,22 +239,32 @@ const Chat = () => {
       </div>
 
       <div className="space-y-2">
-        {filtered.map((p) => (
-          <button
-            key={p.id}
-            onClick={() => setActiveId(p.id)}
-            className="w-full native-card p-3 flex items-center gap-3 press-effect text-left"
-          >
-            <Avatar className="size-11">
-              {p.foto_url && <AvatarImage src={p.foto_url} />}
-              <AvatarFallback>{p.nama.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <div className="font-semibold truncate">{p.nama}</div>
-              <div className="text-xs text-muted-foreground truncate">Ketuk untuk chat</div>
-            </div>
-          </button>
-        ))}
+        {filtered.map((p) => {
+          const count = unreadMap[p.id] ?? 0;
+          return (
+            <button
+              key={p.id}
+              onClick={() => setActiveId(p.id)}
+              className="w-full native-card p-3 flex items-center gap-3 press-effect text-left"
+            >
+              <Avatar className="size-11">
+                {p.foto_url && <AvatarImage src={p.foto_url} />}
+                <AvatarFallback>{p.nama.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold truncate">{p.nama}</div>
+                <div className="text-xs text-muted-foreground truncate">
+                  {count > 0 ? `${count} pesan baru` : "Ketuk untuk chat"}
+                </div>
+              </div>
+              {count > 0 && (
+                <span className="min-w-[22px] h-[22px] px-1.5 rounded-full bg-destructive text-destructive-foreground text-[11px] font-bold flex items-center justify-center">
+                  {count > 99 ? "99+" : count}
+                </span>
+              )}
+            </button>
+          );
+        })}
         {filtered.length === 0 && (
           <p className="text-center text-sm text-muted-foreground py-8">Tidak ada petani ditemukan.</p>
         )}
