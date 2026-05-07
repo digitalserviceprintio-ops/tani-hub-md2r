@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import ChatFab from "./ChatFab";
+import ChatNotifier from "./ChatNotifier";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard", end: true },
@@ -101,6 +102,7 @@ const AppLayout = () => {
         </div>
       </nav>
       <ChatFab />
+      <ChatNotifier />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Sprout } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getTotalUnread, onUnreadChange } from "@/lib/chatUnread";
 
 const STORAGE_KEY = "chat-fab-pos";
 
@@ -13,6 +14,13 @@ const ChatFab = () => {
   const dragging = useRef(false);
   const moved = useRef(false);
   const offset = useRef({ x: 0, y: 0 });
+  const [unread, setUnread] = useState(0);
+
+  useEffect(() => {
+    const update = () => setUnread(getTotalUnread());
+    update();
+    return onUnreadChange(update);
+  }, []);
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -74,7 +82,11 @@ const ChatFab = () => {
       aria-label="Live Chat Petani"
     >
       <Sprout className="size-6" strokeWidth={2.2} />
-      <span className="absolute -top-1 -right-1 size-3 rounded-full bg-destructive border-2 border-background" />
+      {unread > 0 && (
+        <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center border-2 border-background">
+          {unread > 99 ? "99+" : unread}
+        </span>
+      )}
     </button>
   );
 };
